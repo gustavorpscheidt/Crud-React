@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import '../css/App.css'
+import FormLogin from './FormLogin.jsx';
 
 function App() {
-  // const [count, setCount] = useState(0)
+
 
   return (
     <div id="app">
-      <div className="form_holder">
-        <form action="" className="form_login"></form>
-      </div>
+      
+      <FormLogin tipo="login"></FormLogin>
+      
     
     </div>
   )
