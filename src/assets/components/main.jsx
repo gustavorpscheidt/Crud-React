@@ -14,6 +14,11 @@ const router = createBrowserRouter([
     element: <App />,
     
   },
+    {
+    path: '',
+    element: <App />,
+    
+  },
   {
     path: '/cadastro',
     element: <Cadastro />,
