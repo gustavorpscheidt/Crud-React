@@ -8,7 +8,7 @@ function App() {
   return (
     <div id="app">
       
-      <FormLogin tipo="login"></FormLogin>
+      <FormLogin tipo="login"/>
       
     
     </div>

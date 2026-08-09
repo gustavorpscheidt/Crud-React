@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-function FormLogin({ tipo }) {
+function FormLogin(props) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
   async function entrar(e) {
     e.preventDefault();
-
+    alert("esse é o login");
     if (email.trim() === "" || senha.trim() === "") {
       alert("Por favor, preencha todos os campos.");
       return;
@@ -15,7 +15,7 @@ function FormLogin({ tipo }) {
   }
   async function criar(e) {
     e.preventDefault();
-
+    alert("Cadastro realizado com sucesso!");
     if (email.trim() === "" || senha.trim() === "") {
       alert("Por favor, preencha todos os campos.");
       return;
@@ -24,8 +24,12 @@ function FormLogin({ tipo }) {
   }
   return (
     <div className="form_holder">
-      <form action="" className="form_login">
-        <h2>Login </h2>
+      <form
+        action=""
+        className="form_login"
+        onSubmit={(e) => (props.tipo === "login" ? entrar(e) : criar(e))}
+      >
+        <h2>{props.tipo === "login" ? "Login" : "Cadastro"}</h2>
         <label>Email:</label>
         <input
           type="email"
@@ -44,9 +48,26 @@ function FormLogin({ tipo }) {
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
         />
-        <button type="submit" id="btn_login" onClick={(e) => entrar(e)}>
-          Entrar
-        </button>
+        <div className="btncad_holder">
+          <button type="submit" id="btn_login">
+            Entrar
+          </button>
+          <p className="texto_cadlog">
+            {props.tipo === "login" ? (
+              <>
+                Não tem uma conta?<a href="/cadastro" className="link_form_login">
+                  Cadastre-se
+                </a>
+              </>
+            ) : (
+              <>
+                Já tem uma conta? <a href="/" className="link_form_login">
+                  Faça login
+                </a>
+              </>
+            )}
+          </p>
+        </div>
       </form>
     </div>
   );

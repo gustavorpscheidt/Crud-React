@@ -47,3 +47,17 @@ margin-right: 0%;
     background-color: #034720;
   color: white;
 }
+.texto_cadlog{
+  text-align: center;
+  font-size: 12px;
+  margin:0px;
+}
+.btncad_holder {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-direction: column;
+}
+.link_form_login {
+margin: 0px;
+}
