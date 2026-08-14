@@ -5,6 +5,7 @@ import '../css/index.css'
 import App from './App.jsx'
 import Cadastro from './Cadastro.jsx'
 import Home from './Home.jsx'
+import Adm from './Adm.jsx'
 
 // Mantendo apenas a rota inicial do seu App para não gerar erros
 const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
    {
     path: '/home',
     element: <Home />,
+  },
+    {
+    path: '/adm',
+    element: <Adm />,
   }
 ]);
 
