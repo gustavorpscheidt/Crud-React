@@ -1,25 +1,78 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function FormLogin(props) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
   async function entrar(e) {
     e.preventDefault();
-    alert("esse é o login");
+
     if (email.trim() === "" || senha.trim() === "") {
       alert("Por favor, preencha todos os campos.");
       return;
     }
-    //aplicar envio para api e redirecionamento para a página principal do sistema
+    
+    const url = `${import.meta.env.VITE_API_URL}/users/login`;
+
+    try {
+       const resposta = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(dados.error || `Erro na rede: ${resposta.status}`);
+        return; // Impede a navegação se houver erro
+      }
+
+      alert(dados.message);
+    } catch (erro) {
+      alert("Erro ao fazer login :" + erro.message);
+      console.error("Erro ao fazer login :", erro);
+      return; // Impede a navegação se houver erro
+    }
+
+    
+  Cookies.set("email", email, { expires: 7, path: "/" });
+  Cookies.set("senha", senha, { expires: 7, path: "/" });
+
+    navigate("/home");
   }
   async function criar(e) {
     e.preventDefault();
-    alert("Cadastro realizado com sucesso!");
+    const url = `${import.meta.env.VITE_API_URL}/users/cadastro`;
     if (email.trim() === "" || senha.trim() === "") {
       alert("Por favor, preencha todos os campos.");
       return;
     }
+
+    try {
+      const resposta = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(dados.error || `Erro na rede: ${resposta.status}`);
+      }
+
+      alert(dados.message);
+    } catch (erro) {
+      alert("Erro ao cadastrar usuário :" + erro.message);
+      console.error("Erro ao cadastrar usuário :", erro);
+    }
+
     //aplicar envio para api e redirecionamento para a página principal do sistema
   }
   return (
@@ -55,13 +108,15 @@ function FormLogin(props) {
           <p className="texto_cadlog">
             {props.tipo === "login" ? (
               <>
-                Não tem uma conta?<a href="/cadastro" className="link_form_login">
+                Não tem uma conta?
+                <a href="/cadastro" className="link_form_login">
                   Cadastre-se
                 </a>
               </>
             ) : (
               <>
-                Já tem uma conta? <a href="/" className="link_form_login">
+                Já tem uma conta?{" "}
+                <a href="/" className="link_form_login">
                   Faça login
                 </a>
               </>

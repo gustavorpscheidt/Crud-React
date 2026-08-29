@@ -11,7 +11,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "js-cookie": "^3.0.8",
+    "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.23.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
