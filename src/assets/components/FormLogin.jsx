@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+
 
 function FormLogin(props) {
   const navigate = useNavigate();
@@ -23,13 +23,13 @@ function FormLogin(props) {
         headers: {
           "Content-Type": "application/json",
         },
+          credentials: "include",
         body: JSON.stringify({ email, senha }),
       });
       const dados = await resposta.json();
 
       if (!resposta.ok) {
         throw new Error(dados.error || `Erro na rede: ${resposta.status}`);
-        return; // Impede a navegação se houver erro
       }
 
       alert(dados.message);
@@ -38,10 +38,6 @@ function FormLogin(props) {
       console.error("Erro ao fazer login :", erro);
       return; // Impede a navegação se houver erro
     }
-
-    
-  Cookies.set("email", email, { expires: 7, path: "/" });
-  Cookies.set("senha", senha, { expires: 7, path: "/" });
 
     navigate("/home");
   }
@@ -59,6 +55,7 @@ function FormLogin(props) {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ email, senha }),
       });
       const dados = await resposta.json();

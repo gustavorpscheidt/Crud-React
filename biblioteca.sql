@@ -12,7 +12,8 @@ quantidade int(3) not null
 create table usuario(
 id_usuario int(10) not null primary key auto_increment,
 email varchar(50) not null unique,
-senha varchar(50) not null
+senha varchar(50) not null,
+is_admin boolean not null default false
 );
 create table emprestimo(
 id_emprestimo int(10) not null primary key auto_increment,
@@ -24,3 +25,5 @@ data_devolucao date not null,
 foreign key (id_usuario) references usuario(id_usuario),
 foreign key (id_livro) references livro(id_livro)
 );
+
+insert into usuario (email, senha, is_admin) values ("admin@gmail.com", "admin", true);

@@ -4,11 +4,14 @@ import express from "express";//criar servidor mais facilmente
 import connection from "./conexaoBanco.js";
 import cors from "cors";
 import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = process.env.PORT;
 
-app.use(cors({ origin: process.env.URL_FRONT }));
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: process.env.URL_FRONT, credentials: true }));
 
 function validaEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -68,6 +71,14 @@ app.get("/users", async (req, res) => {
     res.status(500).json({ error: "Erro ao buscar usuários" + error });
   }
 });
+app.post("/users/logout", async (req, res) => {
+  try {
+    res.clearCookie("token", { httpOnly: true, sameSite: "lax" });
+    res.status(200).json({ message: "Logout realizado com sucesso!" });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao fazer logout" + error });
+  }
+});
 app.post("/users/login", async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -82,6 +93,12 @@ app.post("/users/login", async (req, res) => {
       } else if (results.length === 0) {
         res.status(401).json({ error: "Email ou senha incorretos" });
       } else {
+        const token = jwt.sign({ id: results[0].id_usuario }, process.env.JWT_SECRET, {
+          expiresIn: '72h', // 72 horas
+        });
+     
+        res.cookie("token", token, { httpOnly: true, sameSite: "lax", maxAge: 72 * 60 * 60 * 1000 }); // 72 horas
+
         res.status(200).json({ message: "Login realizado com sucesso!" });
       }
     });
@@ -89,7 +106,38 @@ app.post("/users/login", async (req, res) => {
     res.status(500).json({ error: "Erro ao fazer login" + error });
   }
 });
+app.get("/users/isADM", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Token não fornecido"});
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const id_user = decoded.id;
 
+
+    const sql = "select * from usuario where id_usuario = ?";
+    const values = [id_user];
+
+    connection.query(sql, values, (error, results) => {
+      if (error) {
+        console.error("Erro ao executar a consulta:", error);
+        res.status(500).json({ error: "Erro ao verificar se é ADM:" + error });
+      } else if (results.length === 0) {
+        res.status(401).json({ message: "Usuário não encontrado"});
+      } else {
+        res.status(200).json({ message: "Usuário é administrador", isAdmin: results[0].is_admin });
+      }
+      }
+    );
+
+
+
+  }catch (error) {
+    res.status(500).json({ error: "Erro ao verificar se é ADM" + error });
+  }
+
+});
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
