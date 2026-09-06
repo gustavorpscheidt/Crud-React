@@ -3,8 +3,14 @@ import { useNavigate } from "react-router-dom";
 import '../css/options.css'
 
 function Options(props) {
+
     const navigate = useNavigate();
+
+
     if(props.isADM){
+      function handleRedirect(path) {
+        navigate(path);
+      }
 
     //ADM
   return (
@@ -13,9 +19,9 @@ function Options(props) {
 
     <h1>O que deseja visualizar? </h1>
 
-        <button className="btn_redirect">Usuários</button>
-        <button className="btn_redirect">livros</button>
-        <button className="btn_redirect">Emprestimos</button>
+        <button className="btn_redirect" onClick={() => handleRedirect("/users")}>Usuários</button>
+        <button className="btn_redirect" onClick={() => handleRedirect("/books")}>livros</button>
+        <button className="btn_redirect" onClick={() => handleRedirect("/loans")}>Emprestimos</button>
        
     </div>
     

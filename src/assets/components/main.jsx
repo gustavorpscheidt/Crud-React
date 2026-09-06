@@ -5,7 +5,9 @@ import '../css/index.css'
 import App from './App.jsx'
 import Cadastro from './Cadastro.jsx'
 import Home from './Home.jsx'
-
+import Users from './Users.jsx'
+import Books from './Books.jsx'
+import Loans from './Loans.jsx'
 
 const router = createBrowserRouter([
   //depois tem que criar uma  pagina para erro 404
@@ -27,6 +29,18 @@ const router = createBrowserRouter([
    {
     path: '/home',
     element: <Home />,
+  },
+  {
+    path: '/users',
+    element: <Users />,
+  },
+  {
+    path: '/books',
+    element: <Books />,
+  },
+  {
+    path: '/loans',
+    element: <Loans />,
   }
 ]);
 
