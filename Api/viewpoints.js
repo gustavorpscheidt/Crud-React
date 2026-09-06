@@ -17,6 +17,31 @@ function validaEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
+function verificarAdm(token) {
+  return new Promise((resolve, reject) => {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const id_user = decoded.id;
+
+      const sql = "select * from usuario where id_usuario = ?";
+      const values = [id_user];
+
+      connection.query(sql, values, (error, results) => {
+        if (error || results.length === 0) {
+          return resolve(false); // Deu erro ou não achou? Retorna false
+        }
+        // Se achou, checa se é admin (retorna true ou false)
+        resolve(results[0].is_admin === 1); 
+      });
+
+    } catch (error) {
+      console.error("Erro ao verificar administrador:", error);
+      resolve(false);
+    }
+  });
+}
+
+
 
 app.post("/users/cadastro", async (req, res) => {
   try {
@@ -45,21 +70,25 @@ app.post("/users/cadastro", async (req, res) => {
       }
     });
 
-    res.status(200);
   } catch (error) {
     res.status(500).json({ error: "Erro ao registrar usuário" });
   }
-
-  // res.status(200).json({"message": "User registered successfully!"});
 });
 
 app.get("/users", async (req, res) => {
   try {
-    const sql = "select * from usuario";
+   const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
+    if (!( await (verificarAdm(token)))) {
+      return res.status(403).json({ error: "Acesso negado. Usuário não é administrador." });
+    }
+    const sql = "select * from usuario where is_admin = 0";
 
     connection.query(sql, (error, results) => {
       if (error) {
-        console.error("Erro ao executar a consulta:", error);
+
         res.status(500).json({ error: "Erro ao buscar usuários:" + error });
       } else if (results.length === 0) {
         res.status(404).json({ error: "Nenhum usuário encontrado" });
@@ -69,6 +98,29 @@ app.get("/users", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar usuários" + error });
+  }
+});
+
+app.get("/books", async (req, res) => {
+  try {
+   const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
+    const sql = "select * from livro";
+
+    connection.query(sql, (error, results) => {
+      if (error) {
+
+        res.status(500).json({ error: "Erro ao buscar livros:" + error });
+      } else if (results.length === 0) {
+        res.status(404).json({ error: "Nenhum livro encontrado" });
+      } else {
+        res.status(200).json(results);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar livros" + error });
   }
 });
 app.post("/users/logout", async (req, res) => {

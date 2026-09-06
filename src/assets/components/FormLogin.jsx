@@ -70,8 +70,9 @@ function FormLogin(props) {
       console.error("Erro ao cadastrar usuário :", erro);
     }
 
-    //aplicar envio para api e redirecionamento para a página principal do sistema
+  
   }
+  
   return (
     <div className="form_holder">
       <form
