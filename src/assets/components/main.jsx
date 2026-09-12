@@ -8,6 +8,7 @@ import Home from './Home.jsx'
 import Users from './Users.jsx'
 import Books from './Books.jsx'
 import Loans from './Loans.jsx'
+import Editar from './Editar.jsx'
 
 const router = createBrowserRouter([
   //depois tem que criar uma  pagina para erro 404
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: '/loans',
     element: <Loans />,
+  },
+  {
+    path: '/editar',
+    element: <Editar />,
   }
 ]);
 

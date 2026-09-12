@@ -123,6 +123,62 @@ app.get("/books", async (req, res) => {
     res.status(500).json({ error: "Erro ao buscar livros" + error });
   }
 });
+
+
+
+app.get("/loan", async (req, res) => {
+  try {
+   const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
+    
+    if (!( await (verificarAdm(token)))) {
+      return res.status(403).json({ error: "Acesso negado. Usuário não é administrador." });
+    }
+
+const sql = `
+    SELECT
+        e.id_emprestimo,
+        e.id_usuario,
+        e.id_livro,
+        u.email,
+        l.titulo,
+        l.autor,
+        l.editora,
+        l.ano,
+        e.data_emprestimo,
+        e.data_devolucao
+    FROM emprestimo e
+    INNER JOIN usuario u
+        ON e.id_usuario = u.id_usuario
+    INNER JOIN livro l
+        ON e.id_livro = l.id_livro
+`;
+
+
+
+
+    connection.query(sql, (error, results) => {
+      if (error) {
+
+        res.status(500).json({ error: "Erro ao buscar empréstimos:" + error });
+      } else if (results.length === 0) {
+        res.status(404).json({ error: "Nenhum empréstimo encontrado" });
+      } else {
+        res.status(200).json(results);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar empréstimos" + error });
+  }
+});
+
+
+
+
+
+
 app.post("/users/logout", async (req, res) => {
   try {
     res.clearCookie("token", { httpOnly: true, sameSite: "lax" });

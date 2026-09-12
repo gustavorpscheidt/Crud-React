@@ -3,6 +3,7 @@ use biblioteca;
 
 create table livro(
 id_livro int(10) not null primary key auto_increment,
+titulo varchar(50) not null,
 autor varchar(50),
 editora varchar(50),
 ano smallint,
