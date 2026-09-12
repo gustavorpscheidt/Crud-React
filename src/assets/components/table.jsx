@@ -240,6 +240,8 @@ function Table(props) {
                             <th>email</th>
                             <th>titulo</th>
                             <th>autor</th>
+                            <th>data devolução</th>
+                            <th>Data Emprestimo</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -253,6 +255,9 @@ function Table(props) {
                                     <td>{loan.email}</td>
                                     <td>{loan.titulo}</td>
                                     <td>{loan.autor}</td>
+                                    <td>{loan.data_devolucao}</td>
+                                    <td>{loan.data_emprestimo}</td>
+                                    
                                     <td className="actions">
                                         <button
                                         

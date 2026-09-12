@@ -246,6 +246,93 @@ app.get("/users/isADM", async (req, res) => {
   }
 
 });
+
+
+app.put("/users", async (req, res) => {
+  try {
+    const { id_usuario, email, senha } = req.body;
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
+
+      if (!validaEmail(email)) {
+      return res.status(400).json({ error: "Email inválido" });
+    }
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const idLogado = decoded.id;
+  const ehAdmin = await verificarAdm(token);
+
+if (!ehAdmin && id_usuario !== idLogado) {
+    return res.status(403).json({
+        error: "Acesso negado."
+    });
+}
+
+    const sql = "update usuario set email = ?, senha = ? where id_usuario = ?";
+    const values = [email, senha, id_usuario];
+
+    connection.query(sql, values, (error, results) => {
+      
+      if (error) {
+        console.error("Erro ao executar a consulta:", error);
+        res.status(500).json({ error: "Erro ao atualizar usuário" + error });
+      } else if(results.affectedRows === 0) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }else {
+        res.status(200).json({ message: "Usuário atualizado com sucesso!" });
+      }
+    });
+
+  }catch (error) {
+    res.status(500).json({ error: "Erro ao atualizar usuário" + error });
+  }
+
+});
+
+app.put("/books", async (req, res) => {
+  try {
+    const { id_livro, titulo, autor, ano, editora, quantidade } = req.body;
+    const token = req.cookies.token;
+    if(quantidade < 0){
+      return res.status(400).json({ error: "Quantidade não pode ser negativa" });
+
+    }
+    if (!token) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
+
+  const ehAdmin = await verificarAdm(token);
+
+if (!ehAdmin ) {
+    return res.status(403).json({
+        error: "Acesso negado."
+    });
+}
+
+    const sql = "update livro set titulo = ?, autor = ?, ano = ?, editora = ?, quantidade = ? where id_livro = ?";
+    const values = [titulo, autor, ano, editora, quantidade, id_livro];
+
+    connection.query(sql, values, (error, results) => {
+      
+      if (error) {
+        console.error("Erro ao executar a consulta:", error);
+        res.status(500).json({ error: "Erro ao atualizar livro" + error });
+      } else if(results.affectedRows === 0) {
+        return res.status(404).json({ error: "Livro não encontrado" });
+      }else {
+        res.status(200).json({ message: "Livro atualizado com sucesso!" });
+      }
+    });
+
+  }catch (error) {
+    res.status(500).json({ error: "Erro ao atualizar livro" + error });
+  }
+
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
